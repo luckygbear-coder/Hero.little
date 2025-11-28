@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>小勇者之旅大冒險</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #ffeec9;
+      font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .game-wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: #fff7e6;
+      border-radius: 16px;
+      border: 2px solid #e1b676;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      padding: 16px;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 8px;
+      color: #8b4a24;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #c07a34;
+      margin-bottom: 8px;
+    }
+
+    /* 主選單按鈕列 */
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0 14px;
+      overflow-x: auto;
+    }
+    .nav-btn {
+      flex: 1;
+      white-space: nowrap;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 14px;
+      background: #f5d29a;
+      color: #5a3218;
+      font-weight: 600;
+    }
+    .nav-btn.active {
+      background: #ffb54a;
+      color: #4a260f;
+      box-shadow: 0 0 0 2px #fff7e6;
+    }
+
+    /* 分頁內容 */
+    .page {
+      display: none;
+      animation: fadeIn .2s ease-out;
+    }
+    .page.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(4px);}
+      to   {opacity: 1; transform: translateY(0);}
+    }
+
+    p {
+      line-height: 1.8;
+      font-size: 14px;
+      color: #5a4637;
+      margin: 4px 0;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 4px 0;
+      color: #5a4637;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .primary-btn {
+      display: inline-block;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 28px;
+      font-size: 16px;
+      font-weight: 700;
+      background: #ff8b4a;
+      color: #fff;
+      margin-top: 10px;
+      box-shadow: 0 3px 0 #c8662b;
+    }
+
+    .primary-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 #c8662b;
+    }
+
+    .tip-box {
+      margin-top: 12px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #fff1cf;
+      border: 1px dashed #e1b676;
+      font-size: 13px;
+      color: #7a5635;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      color: #7a7a7a;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-wrap">
+  <div class="card">
+    <!-- 遊戲標題 -->
+    <h1>小勇者之旅大冒險</h1>
+    <div class="subtitle">情緒與勇氣的奇幻之旅 ✨</div>
+
+    <!-- 主選單 Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-btn active" data-target="page-home">主選單</button>
+      <button class="nav-btn" data-target="page-story">故事背景</button>
+      <button class="nav-btn" data-target="page-howto">玩法教學</button>
+      <button class="nav-btn" data-target="page-monsters">魔物圖鑑</button>
+      <button class="nav-btn" data-target="page-settings">設定 / 說明</button>
+    </div>
+
+    <!-- 🏠 主選單頁 -->
+    <div id="page-home" class="page active">
+      <p class="center">
+        歡迎來到星星王國！<br>
+        跟著村長熊熊，一起用剪刀、石頭、布的力量，<br>
+        幫魔物們找回好心情吧！
+      </p>
+
+      <div class="center">
+        <!-- TODO: 把這個按鈕綁到你的遊戲啟動函式 -->
+        <button class="primary-btn" onclick="startGame()">
+          🚀 開始冒險
+        </button>
+      </div>
+
+      <div class="tip-box">
+        🌟 建議給家長／玩家的小提醒：<br>
+        這款遊戲會出現哭哭、生氣、害怕等壞情緒魔物，<br>
+        透過輕鬆的猜拳對戰，引導孩子認識與表達情緒。
+      </div>
+    </div>
+
+    <!-- 📖 故事背景 -->
+    <div id="page-story" class="page">
+      <h3>📖 故事背景</h3>
+      <p>
+        在遙遠的「星星王國」裡，所有魔物原本都快快樂樂地生活著。
+        直到某一天，一股神秘的「壞情緒黑霧」突然降臨，
+        魔物們被影響得哭哭啼啼、暴躁生氣、失去笑容！
+      </p>
+      <p>
+        星星王國的孩子們被選中成為「小勇者」，
+        只要用 <b>剪刀、石頭、布</b> 的勇氣之力，
+        就能解除魔物的壞情緒，讓牠們再次露出幸福的笑容。
+      </p>
+      <p>
+        村長熊熊會一路陪伴你，提醒魔物的弱點，
+        幫助你順利通關！
+      </p>
+
+      <h3>🎯 冒險目標</h3>
+      <ul>
+        <li>讓 12 隻魔物全部恢復好心情。</li>
+        <li>收集勇氣與好心情，守護星星王國。</li>
+        <li>學會分辨情緒、說出感受、互相幫助。</li>
+      </ul>
+    </div>
+
+    <!-- 🎮 玩法教學 -->
+    <div id="page-howto" class="page">
+      <h3>🎮 基本玩法</h3>
+      <ul>
+        <li>與魔物進行「剪刀、石頭、布」對決。</li>
+        <li>每隻魔物都有「天賦拳」與「不能出的弱點拳」。</li>
+        <li>出對拳 → 傳遞好心情，魔物會從哭哭變開心。</li>
+        <li>當魔物變成開心版本，就會離開黑霧，回到星星王國。</li>
+        <li>全部魔物變開心，即完成本次冒險！</li>
+      </ul>
+
+      <h3>💡 小技巧</h3>
+      <ul>
+        <li>多觀察魔物卡牌上的圖示（✊ / ✌️ / 🖐）。</li>
+        <li>記住「不能出的拳」，就比較不會被壞情緒影響。</li>
+        <li>可以請小朋友先猜：這隻魔物現在是什麼心情？</li>
+      </ul>
+    </div>
+
+    <!-- 🧟 魔物圖鑑（簡易版，可之後接你的卡圖） -->
+    <div id="page-monsters" class="page">
+      <h3>🧟 魔物圖鑑（節錄）</h3>
+      <ul>
+        <li>哭哭史萊姆（Rock／不能出布）</li>
+        <li>小惡魔（Rock／不能出剪刀）</li>
+        <li>懶惰樹精（Paper／不能出石頭）</li>
+        <li>暴躁火球（Rock／不能出布）</li>
+        <li>哭哭菇菇（Paper／不能出剪刀）</li>
+        <li>悲傷骷髏（Rock／不能出布）</li>
+        <!-- 之後你可以在這裡加上全部 12 隻 -->
+      </ul>
+
+      <div class="tip-box">
+        📌 之後你可以把每一隻「卡面 PNG」做成可點選的按鈕，<br>
+        點下去顯示放大圖 + 天賦拳 + 弱點拳 + 情緒說明。
+      </div>
+    </div>
+
+    <!-- ⚙️ 設定 / 說明 -->
+    <div id="page-settings" class="page">
+      <h3>⚙️ 設定 / 家長導覽</h3>
+      <p>
+        這是一款結合「情緒教育」與「剪刀石頭布」的輕量遊戲，
+        適合親子一起玩，建議年齡約 5 歲以上。
+      </p>
+      <ul>
+        <li>可搭配真實卡牌／桌遊一起使用。</li>
+        <li>建議遊戲後和孩子聊聊：<br>
+          「哪一隻魔物跟你很像？」<br>
+          「你最近有出現什麼壞情緒嗎？」</li>
+        <li>讓孩子知道：所有情緒都可以被看見與安撫。</li>
+      </ul>
+
+      <p class="mono">
+        ※ 若你是開發者：可在 <code>startGame()</code> 函式內<br>
+        連結到實際遊戲主程式或 Phaser / Unity WebGL 場景。
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 🔁 Tabs 分頁切換
+  const navButtons = document.querySelectorAll('.nav-btn');
+  const pages = document.querySelectorAll('.page');
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      // 切換按鈕樣式
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      // 切換頁面
+      pages.forEach(p => {
+        p.classList.toggle('active', p.id === target);
+      });
+    });
+  });
+
+  // 🚀 開始遊戲：這裡先放範例，你之後接你的主程式
+  function startGame() {
+    alert("這裡接你的『開始遊戲』程式，例如跳到 battle.html 或啟動遊戲場景。");
+    // 例如：
+    // window.location.href = "game.html";
+  }
+</script>
+
+</body>
+</html>
