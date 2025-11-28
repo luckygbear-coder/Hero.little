@@ -1,13 +1,76 @@
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { BookOpen, Gamepad2, Skull, Settings, Home as HomeIcon, Rocket } from "lucide-react";
+import { BookOpen, Gamepad2, Skull, Settings, Home as HomeIcon, Rocket, User } from "lucide-react";
 
 interface GameMenuProps {
-  onStartGame: () => void;
+  onStartGame: (hero: string) => void;
 }
 
+const HEROES = [
+  {
+    id: "戰士",
+    name: "🛡️ 戰士",
+    badge: "Rock ✊",
+    desc: "個性：勇敢、有責任感",
+    quote: "「我一定會守護大家！」",
+    ability: "出石頭並勝利 → 傳達 2 倍好心情。",
+    fist: "✊ 石頭"
+  },
+  {
+    id: "法師",
+    name: "🔮 法師",
+    badge: "Scissors ✌️",
+    desc: "個性：聰明、有創意",
+    quote: "「嘿嘿～我有新點子！」",
+    ability: "出剪刀並勝利 → 傳達 2 倍好心情。",
+    fist: "✌️ 剪刀"
+  },
+  {
+    id: "牧師",
+    name: "💖 牧師",
+    badge: "Paper 🖐",
+    desc: "個性：溫柔、善解人意",
+    quote: "「別擔心，我來幫你～」",
+    ability: "出布並勝利 → 傳達 2 倍好心情。",
+    fist: "🖐 布"
+  },
+  {
+    id: "勇敢的村民",
+    name: "🌾 勇敢的村民",
+    badge: "自由拳 ✨",
+    desc: "個性：樸實、堅毅",
+    quote: "「我雖然平凡，但不放棄！」",
+    ability: "魔王戰使用任意星星 → 即使輸也不受壞情緒影響。",
+    fist: "✨ 任意拳"
+  }
+];
+
 export default function GameMenu({ onStartGame }: GameMenuProps) {
+  const [selectedHero, setSelectedHero] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("hero");
+
+  const handleHeroSelect = (heroId: string) => {
+    setSelectedHero(heroId);
+  };
+
+  const handleConfirmHero = () => {
+    if (selectedHero) {
+      setActiveTab("home");
+    }
+  };
+
+  const handleStartGame = () => {
+    if (selectedHero) {
+      onStartGame(selectedHero);
+    } else {
+      setActiveTab("hero");
+    }
+  };
+
+  const currentHeroData = HEROES.find(h => h.id === selectedHero);
+
   return (
     <div className="w-full max-w-4xl mx-auto font-sans">
       <Card className="bg-[#fff7e6] border-2 border-[#e1b676] shadow-md rounded-2xl p-4 md:p-6">
@@ -17,8 +80,14 @@ export default function GameMenu({ onStartGame }: GameMenuProps) {
           <div className="text-[#c07a34] text-sm font-medium">情緒與勇氣的奇幻之旅 ✨</div>
         </div>
 
-        <Tabs defaultValue="home" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="w-full flex flex-wrap justify-start md:justify-center gap-2 bg-transparent h-auto p-0 mb-6">
+             <TabsTrigger 
+              value="hero" 
+              className="flex-1 min-w-[100px] rounded-full bg-[#f5d29a] text-[#5a3218] data-[state=active]:bg-[#ffb54a] data-[state=active]:text-[#4a260f] border border-transparent data-[state=active]:border-white/50"
+            >
+              <User className="w-4 h-4 mr-2" /> 選擇小勇者
+            </TabsTrigger>
             <TabsTrigger 
               value="home" 
               className="flex-1 min-w-[100px] rounded-full bg-[#f5d29a] text-[#5a3218] data-[state=active]:bg-[#ffb54a] data-[state=active]:text-[#4a260f] border border-transparent data-[state=active]:border-white/50"
@@ -53,6 +122,68 @@ export default function GameMenu({ onStartGame }: GameMenuProps) {
 
           <div className="bg-[#fffdf8] rounded-xl p-4 md:p-6 border border-[#f0d2a4] min-h-[300px]">
             
+            {/* Hero Selection Tab */}
+            <TabsContent value="hero" className="mt-0 space-y-6 animate-in fade-in slide-in-from-bottom-2">
+              <div className="space-y-2 text-center md:text-left">
+                <h3 className="text-[#8b4a24] font-bold text-lg">🌟 選擇你的小勇者</h3>
+                <p className="text-[#5a4637] text-sm">
+                  在出發冒險之前，先選擇你要扮演的小勇者角色。<br className="hidden md:block"/>
+                  每個職業都有不同個性與口頭禪，可以陪你一起面對壞情緒魔物。
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {HEROES.map((hero) => (
+                  <div 
+                    key={hero.id}
+                    onClick={() => handleHeroSelect(hero.id)}
+                    className={`
+                      relative p-3 rounded-xl border-2 cursor-pointer transition-all
+                      ${selectedHero === hero.id 
+                        ? 'bg-[#fffaf0] border-[#ff8b4a] shadow-[0_0_0_2px_#ffe5c5]' 
+                        : 'bg-[#fffaf0] border-[#e1b676] hover:border-[#ffb54a]'
+                      }
+                    `}
+                  >
+                    <div className="absolute right-2 top-2 bg-[#ffb54a] text-[#4a260f] text-[10px] px-2 py-0.5 rounded-full font-bold">
+                      {hero.badge}
+                    </div>
+                    <h4 className="text-[#7c3e1d] font-bold mb-1">{hero.name}</h4>
+                    <div className="text-[#c07a34] text-xs mb-1">{hero.desc}</div>
+                    <p className="text-[#5a4637] text-xs italic mb-1">{hero.quote}</p>
+                    <p className="text-[#5a4637] text-xs border-t border-[#e1b676]/30 pt-1 mt-1">
+                      能力：{hero.ability}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-[#fff1cf] p-3 rounded-xl text-sm text-[#5a4637] text-center border border-dashed border-[#e1b676]">
+                {currentHeroData ? (
+                  <>
+                    目前選擇的小勇者：<b className="text-[#8b4a24]">{currentHeroData.name}</b><br/>
+                    招牌拳法：{currentHeroData.fist}<br/>
+                    口頭禪：{currentHeroData.quote}
+                  </>
+                ) : (
+                  <>
+                    目前選擇的小勇者：<b>尚未選擇</b><br/>
+                    請點選上方任一角色卡開始冒險。
+                  </>
+                )}
+              </div>
+
+              <div className="text-center">
+                <Button 
+                  onClick={handleConfirmHero}
+                  disabled={!selectedHero}
+                  className="bg-[#ff8b4a] hover:bg-[#e87a3a] text-white rounded-full px-8 py-2 text-base font-bold shadow-[0_3px_0_#c8662b] active:translate-y-1 active:shadow-[0_1px_0_#c8662b] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  ✅ 選好囉，前往主選單
+                </Button>
+              </div>
+            </TabsContent>
+
             {/* Home Tab */}
             <TabsContent value="home" className="mt-0 space-y-6 animate-in fade-in slide-in-from-bottom-2">
               <div className="text-center space-y-4 py-4">
@@ -64,7 +195,7 @@ export default function GameMenu({ onStartGame }: GameMenuProps) {
 
                 <div className="pt-4">
                   <Button 
-                    onClick={onStartGame}
+                    onClick={handleStartGame}
                     className="bg-[#ff8b4a] hover:bg-[#e87a3a] text-white rounded-full px-8 py-6 text-lg font-bold shadow-[0_4px_0_#c8662b] active:translate-y-1 active:shadow-[0_1px_0_#c8662b] transition-all"
                   >
                     <Rocket className="w-6 h-6 mr-2" /> 🚀 開始冒險
@@ -103,7 +234,7 @@ export default function GameMenu({ onStartGame }: GameMenuProps) {
                 <Rocket className="w-5 h-5 mr-2" /> 冒險目標
               </h3>
               <ul className="list-disc pl-5 space-y-1">
-                <li>讓 10 隻魔物全部恢復好心情。</li>
+                <li>讓 12 隻魔物全部恢復好心情。</li>
                 <li>收集勇氣與好心情，守護星星王國。</li>
                 <li>學會分辨情緒、說出感受、互相幫助。</li>
               </ul>

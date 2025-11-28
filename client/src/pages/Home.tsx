@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "wouter";
 import { Heart, Users, Star, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,14 @@ import GameMenu from "@/components/GameMenu";
 
 export default function Home() {
   const gameSectionRef = useRef<HTMLDivElement>(null);
+  const [selectedHero, setSelectedHero] = useState("戰士");
 
-  const scrollToGame = () => {
-    gameSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+  const handleStartGame = (hero: string) => {
+    setSelectedHero(hero);
+    // Short delay to ensure state update before scrolling
+    setTimeout(() => {
+      gameSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   return (
@@ -41,12 +46,12 @@ export default function Home() {
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-16">
         
         {/* Game Menu / Guide Section */}
-        <GameMenu onStartGame={scrollToGame} />
+        <GameMenu onStartGame={handleStartGame} />
 
         {/* Game Section */}
         <section className="relative" ref={gameSectionRef}>
           <div className="absolute inset-0 bg-gradient-to-b from-[#ff8b4a]/5 to-transparent rounded-3xl -z-10 transform scale-105" />
-          <LittleHeroGame />
+          <LittleHeroGame selectedHeroName={selectedHero} />
           <div className="text-center mt-4 text-sm text-muted-foreground font-hand text-lg transform rotate-1">
             Try the demo above! 👆
           </div>
