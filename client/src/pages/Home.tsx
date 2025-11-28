@@ -32,23 +32,48 @@ export default function Home() {
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-16">
         
-        {/* Hero Section */}
-        <section className="text-center space-y-6 py-8">
-          <h1 className="text-4xl md:text-6xl font-display font-black text-foreground tracking-tight">
-            Connect through <span className="text-primary inline-block transform -rotate-2">Play</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Find friends who share your interests by battling monsters together. 
-            Heal bad moods and build real connections in a cozy RPG world.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button size="lg" className="h-12 px-8 text-lg rounded-full shadow-lg shadow-primary/20">
-              Start Matching
-            </Button>
-            <Button size="lg" variant="secondary" className="h-12 px-8 text-lg rounded-full">
-              Watch Demo
-            </Button>
-          </div>
+        {/* Story Section */}
+        <section id="story" className="bg-[#fff7e6] p-6 md:p-8 rounded-xl border-2 border-[#e7c899] mx-auto max-w-4xl font-sans shadow-sm">
+            <h2 className="text-center text-2xl text-[#8b4a24] mb-4 font-bold">🌟 小勇者之旅大冒險</h2>
+
+            <h3 className="text-[#b46a2b] mt-6 font-bold text-lg">📖 故事背景</h3>
+            <p className="leading-relaxed text-[#5a4637] mt-2">
+                在遙遠的「星星王國」裡，所有魔物原本都快快樂樂地生活著。
+                直到某一天，一股神秘的「壞情緒黑霧」突然降臨，
+                魔物們被影響得哭哭啼啼、暴躁生氣、失去笑容！
+            </p>
+            <p className="leading-relaxed text-[#5a4637] mt-2">
+                星星王國的孩子們被選中成為「小勇者」，
+                只要用 <strong className="text-[#8b4a24]">剪刀、石頭、布</strong> 的勇氣之力，
+                就能解除魔物的壞情緒，
+                讓牠們再次露出幸福的笑容。
+            </p>
+            <p className="leading-relaxed text-[#5a4637] mt-2">
+                村長熊熊會一路陪伴你，
+                提醒魔物的弱點，
+                幫助你順利通關！
+            </p>
+
+            <h3 className="text-[#b46a2b] mt-6 font-bold text-lg">🎮 遊戲玩法介紹</h3>
+            <ul className="leading-relaxed text-[#5a4637] pl-5 list-disc mt-2 space-y-1">
+                <li>與魔物進行剪刀石頭布對決。</li>
+                <li>每隻魔物都有「天賦拳」與「不能出的弱點拳」。</li>
+                <li>出對拳 → 傳遞好心情，讓魔物變得開心！</li>
+                <li>擊敗一隻魔物後會進入下一關（關卡模式）。</li>
+                <li>全部魔物恢復笑容後，即可完成冒險！</li>
+            </ul>
+
+            <h3 className="text-[#b46a2b] mt-6 font-bold text-lg">🧸 村長熊熊的提示</h3>
+            <div className="bg-[#fffaf0] p-3 rounded-lg border border-[#e7c899] mt-2">
+                <p className="leading-relaxed text-[#5a4637]">
+                    「小勇者別擔心！我會告訴你魔物不能出什麼拳，
+                    只要記住魔物的弱點，你一定能成功讓牠們開心起來！」  
+                </p>
+            </div>
+
+            <p className="text-center mt-8 text-xl text-[#8b4a24] font-bold animate-pulse">
+                ⭐ 準備好你的勇氣，一起出發吧！ ⭐
+            </p>
         </section>
 
         {/* Game Section */}
