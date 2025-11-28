@@ -1,38 +1,33 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { db } from "./db";
+import { gameSessions } from "@shared/schema";
+import { type GameSession, type InsertGameSession } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getGameSession(id: string): Promise<GameSession | undefined>;
+  createGameSession(session: InsertGameSession): Promise<GameSession>;
+  updateGameSession(id: string, updates: Partial<GameSession>): Promise<GameSession>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DrizzleStorage implements IStorage {
+  async getGameSession(id: string): Promise<GameSession | undefined> {
+    const result = await db.select().from(gameSessions).where(eq(gameSessions.id, id));
+    return result[0];
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async createGameSession(session: InsertGameSession): Promise<GameSession> {
+    const result = await db.insert(gameSessions).values(session).returning();
+    return result[0];
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async updateGameSession(id: string, updates: Partial<GameSession>): Promise<GameSession> {
+    const result = await db
+      .update(gameSessions)
+      .set(updates)
+      .where(eq(gameSessions.id, id))
+      .returning();
+    return result[0];
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DrizzleStorage();
