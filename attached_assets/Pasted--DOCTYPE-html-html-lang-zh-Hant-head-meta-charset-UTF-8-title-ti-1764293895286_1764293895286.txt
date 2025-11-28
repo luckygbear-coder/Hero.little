@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>小勇者單場戰鬥 - 熊熊提示版</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif;
+      background: #fff7e6;
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+    .game-container {
+      max-width: 600px;
+      width: 100%;
+      background: #fffdf7;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 16px;
+      border: 3px solid #f3c58a;
+    }
+    h1 {
+      text-align: center;
+      margin: 0;
+      color: #d27b2f;
+      font-size: 22px;
+    }
+    .sub {
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    #bearHint {
+      background:#fff3c8;
+      border:2px solid #e8b04c;
+      padding:8px;
+      border-radius:8px;
+      margin-bottom:10px;
+      font-size:14px;
+      display:none;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .card {
+      flex: 1 1 48%;
+      background: #fffaf0;
+      border-radius: 12px;
+      padding: 10px;
+      border: 2px solid #f0d2a4;
+    }
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 16px;
+    }
+    .label {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 2px;
+    }
+    .hp, .mood {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+    .avatar {
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    select, button {
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #d0b48a;
+      background: #fff8e8;
+    }
+    button { cursor: pointer; font-weight: 600; }
+    button:disabled { opacity: 0.5; cursor:not-allowed; }
+    .choice-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .choice-btn {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 3px solid #f3c58a;
+      font-size: 24px;
+      background: #ffeec4;
+      display: flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap: 2px;
+    }
+    .choice-btn span { font-size: 11px; }
+    .log {
+      background: #fffaf0;
+      border-radius: 8px;
+      border: 1px dashed #f0cda0;
+      padding: 8px;
+      font-size: 12px;
+      height: 120px;
+      overflow-y: auto;
+      white-space: pre-line;
+    }
+    .ribbon {
+      text-align: center;
+      margin-top: 6px;
+      font-size: 13px;
+      color: #a56a23;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    <h1>🌟 小勇者單場戰鬥</h1>
+    <div class="sub">剪刀 ✌️・石頭 ✊・布 🖐</div>
+
+    <!-- 🐻 村長熊熊提示 -->
+    <div id="bearHint"></div>
+
+    <!-- 勇者選擇 -->
+    <div style="text-align:center; margin-bottom:12px;">
+      <label>選擇勇者：</label>
+      <select id="heroSelect">
+        <option value="戰士">戰士（✊ 石頭天賦）</option>
+        <option value="法師">法師（✌️ 剪刀天賦）</option>
+        <option value="牧師">牧師（🖐 布天賦）</option>
+        <option value="勇敢的村民">勇敢的村民（無限制）</option>
+      </select>
+      <button id="startBtn">開始戰鬥</button>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h2 id="heroName">勇者</h2>
+        <div class="avatar">🧒</div>
+        <div class="label">好心情（HP）</div>
+        <div class="hp" id="heroHp">❤️❤️❤️</div>
+        <div class="label">上一回合</div>
+        <div id="heroLast">—</div>
+      </div>
+
+      <div class="card">
+        <h2>被壞情緒影響的魔物</h2>
+        <div class="avatar">👾</div>
+        <div class="label">壞情緒</div>
+        <div class="mood" id="monsterMood">💢💢💢</div>
+        <div class="label">上一回合</div>
+        <div id="monsterLast">—</div>
+      </div>
+    </div>
+
+    <!-- 出拳按鈕 -->
+    <div class="choice-buttons">
+      <button class="choice-btn" data-move="rock" disabled>✊<span>石頭</span></button>
+      <button class="choice-btn" data-move="scissors" disabled>✌️<span>剪刀</span></button>
+      <button class="choice-btn" data-move="paper" disabled>🖐<span>布</span></button>
+    </div>
+
+    <div class="log" id="log"></div>
+    <div class="ribbon" id="resultText"></div>
+    <div style="text-align:center; margin-top:8px;">
+      <button id="resetBtn" style="display:none;">再玩一次</button>
+    </div>
+
+  </div>
+
+  <script>
+    // ========= 可調整基本數值 =========
+    let MAX_HERO_HP = 3;
+    let MAX_MONSTER_MOOD = 3;
+
+    // ========= 魔物弱點（禁出拳） =========
+    // 可改成 rock / scissors / paper
+    const monsterWeakness = "rock";
+
+    // ========= 狀態變數 =========
+    let heroHp, monsterMood, gameOver = false;
+
+    const heroSelect = document.getElementById("heroSelect");
+    const heroNameEl = document.getElementById("heroName");
+    const heroHpEl = document.getElementById("heroHp");
+    const monsterMoodEl = document.getElementById("monsterMood");
+    const heroLastEl = document.getElementById("heroLast");
+    const monsterLastEl = document.getElementById("monsterLast");
+    const logEl = document.getElementById("log");
+    const bearHint = document.getElementById("bearHint");
+    const resultTextEl = document.getElementById("resultText");
+    const choiceButtons = document.querySelectorAll(".choice-btn");
+
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const moveDisplay = {
+      rock: "✊（石頭）",
+      scissors: "✌️（剪刀）",
+      paper: "🖐（布）"
+    };
+
+    function hearts(n){ return "❤️".repeat(n); }
+    function angry(n){ return "💢".repeat(n); }
+
+    function appendLog(text){
+      logEl.textContent += text + "\n";
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setButtonsEnabled(enable){
+      choiceButtons.forEach(btn => btn.disabled = !enable);
+    }
+
+    // ========= 遊戲開始 =========
+    function startGame(){
+      heroHp = MAX_HERO_HP;
+      monsterMood = MAX_MONSTER_MOOD;
+      gameOver = false;
+
+      heroLastEl.textContent = "—";
+      monsterLastEl.textContent = "—";
+      resultTextEl.textContent = "";
+      logEl.textContent = "";
+
+      heroNameEl.textContent = "勇者：" + heroSelect.value;
+      heroHpEl.textContent = hearts(heroHp);
+      monsterMoodEl.textContent = angry(monsterMood);
+
+      // 🐻 熊熊提示弱點（顯示禁出拳）
+      bearHint.style.display = "block";
+      if(monsterWeakness === "rock"){
+        bearHint.textContent = "🐻 村長熊熊：小勇者注意！這隻魔物不能出 ✊ 石頭喔！";
+      } else if(monsterWeakness === "scissors"){
+        bearHint.textContent = "🐻 村長熊熊：嘿嘿～這隻魔物不能出 ✌️ 剪刀！";
+      } else {
+        bearHint.textContent = "🐻 村長熊熊：太好了！這隻魔物不能出 🖐 布！";
+      }
+
+      setButtonsEnabled(true);
+      resetBtn.style.display = "none";
+
+      appendLog("新的冒險開始了！加油，小勇者！");
+    }
+
+    // ========= 魔物隨機出拳（避開弱點） =========
+    function randomMove(){
+      const moves = ["rock", "scissors", "paper"].filter(m => m !== monsterWeakness);
+      return moves[Math.floor(Math.random() * moves.length)];
+    }
+
+    // ========= 判定勝負 =========
+    function judge(p, e){
+      if(p===e) return "draw";
+      if(
+        (p==="rock" && e==="scissors") ||
+        (p==="scissors" && e==="paper") ||
+        (p==="paper" && e==="rock")
+      ) return "win";
+      return "lose";
+    }
+
+    // ========= 出拳處理 =========
+    function handleChoice(move){
+      if(gameOver) return;
+
+      const enemy = randomMove();
+      const result = judge(move, enemy);
+
+      heroLastEl.textContent = moveDisplay[move];
+      monsterLastEl.textContent = moveDisplay[enemy];
+
+      if(result === "win"){
+        // ⭐ 戰士天賦：石頭勝利 → -2
+        if(heroSelect.value === "戰士" && move === "rock"){
+          monsterMood -= 2;
+          appendLog("🔥 天賦發動！戰士的石頭威力加倍，魔物壞情緒 -2！");
+        } else {
+          monsterMood -= 1;
+          appendLog(`你出了 ${moveDisplay[move]}，魔物出了 ${moveDisplay[enemy]}。\n你成功傳遞好心情，魔物壞情緒 -1！`);
+        }
+        if(monsterMood < 0) monsterMood = 0;
+        monsterMoodEl.textContent = angry(monsterMood);
+
+      } else if(result === "lose"){
+        heroHp -= 1;
+        heroHpEl.textContent = hearts(heroHp);
+        appendLog(`你出了 ${moveDisplay[move]}，魔物出了 ${moveDisplay[enemy]}。\n魔物的壞情緒太強烈，你的好心情 -1。`);
+
+      } else {
+        appendLog(`你出了 ${moveDisplay[move]}，魔物出了 ${moveDisplay[enemy]}。\n勢均力敵！再試一次！`);
+      }
+
+      checkEnd();
+    }
+
+    // ========= 判定結束 =========
+    function checkEnd(){
+      if(monsterMood === 0){
+        resultTextEl.textContent = "🎉 你成功讓魔物恢復好心情！獲得一顆勇氣星星 ✨";
+        appendLog("魔物開心地笑了起來，變回好朋友。");
+        endGame();
+      }
+      if(heroHp === 0){
+        resultTextEl.textContent = "😢 你的好心情用完了…下次再挑戰吧！";
+        appendLog("你回到村莊休息，並深呼吸調整心情。");
+        endGame();
+      }
+    }
+
+    function endGame(){
+      gameOver = true;
+      setButtonsEnabled(false);
+      resetBtn.style.display = "inline-block";
+    }
+
+    // ========= 事件綁定 =========
+    startBtn.addEventListener("click", startGame);
+    resetBtn.addEventListener("click", startGame);
+    choiceButtons.forEach(btn=>{
+      btn.addEventListener("click", ()=> handleChoice(btn.dataset.move));
+    });
+  </script>
+
+</body>
+</html>
