@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>小勇者之旅大冒險</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #ffeec9;
+      font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .game-wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: #fff7e6;
+      border-radius: 16px;
+      border: 2px solid #e1b676;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      padding: 16px;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 8px;
+      color: #8b4a24;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #c07a34;
+      margin-bottom: 8px;
+    }
+
+    /* 主選單按鈕列 */
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0 14px;
+      overflow-x: auto;
+    }
+    .nav-btn {
+      flex: 1;
+      white-space: nowrap;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 14px;
+      background: #f5d29a;
+      color: #5a3218;
+      font-weight: 600;
+    }
+    .nav-btn.active {
+      background: #ffb54a;
+      color: #4a260f;
+      box-shadow: 0 0 0 2px #fff7e6;
+    }
+
+    /* 分頁內容 */
+    .page {
+      display: none;
+      animation: fadeIn .2s ease-out;
+    }
+    .page.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(4px);}
+      to   {opacity: 1; transform: translateY(0);}
+    }
+
+    p {
+      line-height: 1.8;
+      font-size: 14px;
+      color: #5a4637;
+      margin: 4px 0;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 4px 0;
+      color: #5a4637;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .primary-btn {
+      display: inline-block;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 28px;
+      font-size: 16px;
+      font-weight: 700;
+      background: #ff8b4a;
+      color: #fff;
+      margin-top: 10px;
+      box-shadow: 0 3px 0 #c8662b;
+    }
+    .primary-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 #c8662b;
+    }
+
+    .tip-box {
+      margin-top: 12px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #fff1cf;
+      border: 1px dashed #e1b676;
+      font-size: 13px;
+      color: #7a5635;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      color: #7a7a7a;
+    }
+
+    /* 小勇者卡片 */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .hero-card {
+      border-radius: 14px;
+      border: 2px solid #e1b676;
+      background: #fffaf0;
+      padding: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      position: relative;
+    }
+    .hero-card h4 {
+      margin: 0 0 4px;
+      font-size: 14px;
+      color: #7c3e1d;
+    }
+    .hero-tag {
+      font-size: 12px;
+      color: #c07a34;
+      margin-bottom: 2px;
+    }
+    .hero-card p {
+      font-size: 12px;
+      margin: 2px 0;
+    }
+    .hero-card.active {
+      border-color: #ff8b4a;
+      box-shadow: 0 0 0 2px #ffe5c5;
+    }
+    .hero-badge {
+      position: absolute;
+      right: 6px;
+      top: 6px;
+      font-size: 11px;
+      background: #ffb54a;
+      color: #4a260f;
+      padding: 2px 6px;
+      border-radius: 999px;
+    }
+
+    .current-hero {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #5a4637;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: #fff1cf;
+    }
+
+    /* 九宮格地圖 */
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .map-cell {
+      border-radius: 12px;
+      border: 2px solid #d4b073;
+      background: linear-gradient(135deg, #ffeec9, #fffaf0);
+      padding: 6px 6px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      position: relative;
+      min-height: 70px;
+    }
+    .map-cell h4 {
+      margin: 0 0 2px;
+      font-size: 13px;
+      color: #7b3c1e;
+    }
+    .map-cell p {
+      font-size: 11px;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .map-cell span.tag {
+      display: inline-block;
+      margin-top: 3px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #ffcf73;
+      color: #4a260f;
+      font-size: 10px;
+    }
+    .map-cell.active {
+      border-color: #ff8b4a;
+      box-shadow: 0 0 0 2px #ffe5c5;
+      background: linear-gradient(135deg, #ffe2ad, #fff7de);
+    }
+    .map-cell .pos-label {
+      position: absolute;
+      right: 4px;
+      bottom: 4px;
+      font-size: 10px;
+      color: #9a6a3a;
+      opacity: .9;
+    }
+    /* 通關標記 */
+    .cleared-star {
+      position: absolute;
+      left: 6px;
+      bottom: 4px;
+      font-size: 10px;
+      background: #ffeb8a;
+      color: #4a260f;
+      padding: 1px 6px;
+      border-radius: 999px;
+    }
+
+    .current-stage {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #5a4637;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: #fff1cf;
+    }
+
+    /* 愛的力量／勇氣星星語句 */
+    #loveMessage {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #6d3b3b;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #ffeef2;
+      border: 1px dashed #f1a7b3;
+    }
+    #courageMessage {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #4a4a24;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #f4ffdd;
+      border: 1px dashed #c6e484;
+    }
+
+    /* 戰鬥畫面 */
+    .battle-box {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 12px;
+      background: #fffaf0;
+      border: 1px solid #e1b676;
+      font-size: 13px;
+      color: #5a4637;
+    }
+    .battle-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .battle-hero, .battle-monster {
+      flex: 1;
+    }
+    .battle-hero b, .battle-monster b {
+      color: #7c3e1d;
+    }
+    .battle-mode-label {
+      font-size: 12px;
+      color: #c0571e;
+      margin-bottom: 4px;
+    }
+    .bear-tip {
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 10px;
+      background: #e9f5ff;
+      border: 1px dashed #7aa7d9;
+      font-size: 13px;
+      color: #34516f;
+    }
+    .battle-buttons {
+      margin-top: 10px;
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .battle-btn {
+      min-width: 90px;
+      border-radius: 999px;
+      border: none;
+      padding: 8px 10px;
+      font-size: 14px;
+      background: #ffd38a;
+      color: #4a260f;
+      font-weight: 600;
+    }
+    .battle-btn.hero-talent {
+      background: #ffc25e;
+      box-shadow: 0 0 0 2px #fff4cf;
+    }
+    #battleResult {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid #e1b676;
+      font-size: 13px;
+      color: #5a4637;
+      min-height: 40px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-wrap">
+  <div class="card">
+    <!-- 遊戲標題 -->
+    <h1>小勇者之旅大冒險</h1>
+    <div class="subtitle">情緒與勇氣的奇幻之旅 ✨</div>
+
+    <!-- 主選單 Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-btn active" data-target="page-hero">選擇小勇者</button>
+      <button class="nav-btn" data-target="page-home">主選單</button>
+      <button class="nav-btn" data-target="page-map">地圖冒險</button>
+      <button class="nav-btn" data-target="page-battle">戰鬥</button>
+      <button class="nav-btn" data-target="page-story">故事背景</button>
+      <button class="nav-btn" data-target="page-howto">玩法教學</button>
+      <button class="nav-btn" data-target="page-monsters">魔物圖鑑</button>
+      <button class="nav-btn" data-target="page-settings">設定 / 說明</button>
+    </div>
+
+    <!-- 🌟 角色介紹 + 選擇小勇者 -->
+    <div id="page-hero" class="page active">
+      <h3>🌟 選擇你的小勇者</h3>
+      <p>
+        在出發冒險之前，先選擇你要扮演的小勇者角色。<br>
+        每個職業都有不同個性與口頭禪，可以陪你一起面對壞情緒魔物。
+      </p>
+
+      <div class="hero-grid">
+        <!-- 戰士 -->
+        <div class="hero-card" data-hero="戰士" data-fist="rock" data-line="「我一定會守護大家！」">
+          <div class="hero-badge">Rock ✊</div>
+          <h4>🛡️ 戰士</h4>
+          <div class="hero-tag">個性：勇敢、有責任感</div>
+          <p>口頭禪：我一定會守護大家！</p>
+          <p>能力：出石頭並勝利 → 傳達 2 倍好心情。</p>
+        </div>
+
+        <!-- 法師 -->
+        <div class="hero-card" data-hero="法師" data-fist="scissors" data-line="「嘿嘿～我有新點子！」">
+          <div class="hero-badge">Scissors ✌️</div>
+          <h4>🔮 法師</h4>
+          <div class="hero-tag">個性：聰明、有創意</div>
+          <p>口頭禪：嘿嘿～我有新點子！</p>
+          <p>能力：出剪刀並勝利 → 傳達 2 倍好心情。</p>
+        </div>
+
+        <!-- 牧師 -->
+        <div class="hero-card" data-hero="牧師" data-fist="paper" data-line="「別擔心，我來幫你～」">
+          <div class="hero-badge">Paper 🖐</div>
+          <h4>💖 牧師</h4>
+          <div class="hero-tag">個性：溫柔、善解人意</div>
+          <p>口頭禪：別擔心，我來幫你～</p>
+          <p>能力：出布並勝利 → 傳達 2 倍好心情。</p>
+        </div>
+
+        <!-- 勇敢的村民 -->
+        <div class="hero-card" data-hero="勇敢的村民" data-fist="any" data-line="「我雖然平凡，但不放棄！」">
+          <div class="hero-badge">自由拳 ✨</div>
+          <h4>🌾 勇敢的村民</h4>
+          <div class="hero-tag">個性：樸實、堅毅</div>
+          <p>口頭禪：我雖然平凡，但不放棄！</p>
+          <p>能力：魔王戰使用任意拳 → 即使輸也不受壞情緒影響。</p>
+        </div>
+      </div>
+
+      <div id="currentHero" class="current-hero">
+        目前選擇的小勇者：<b>尚未選擇</b><br>
+        請點選上方任一角色卡開始冒險。
+      </div>
+
+      <div class="center">
+        <button class="primary-btn" onclick="goToHome()">
+          ✅ 選好囉，前往主選單
+        </button>
+      </div>
+    </div>
+
+    <!-- 🏠 主選單頁 -->
+    <div id="page-home" class="page">
+      <p class="center">
+        歡迎來到星星王國！<br>
+        跟著村長熊熊，一起用剪刀、石頭、布的力量，<br>
+        幫魔物們找回好心情吧！
+      </p>
+
+      <div class="center">
+        <button class="primary-btn" onclick="goToMap()">
+          🗺️ 前往冒險地圖
+        </button>
+      </div>
+
+      <div class="tip-box">
+        🌟 小提示：<br>
+        把九宮格全部變成「⭐ 已通關」，<br>
+        就會自動解鎖最終魔王關卡！
+      </div>
+    </div>
+
+    <!-- 🗺️ 九宮格地圖 -->
+    <div id="page-map" class="page">
+      <h3>🗺️ 冒險地圖（九宮格）</h3>
+      <p>
+        選擇一個地點進行戰鬥，每一格都住著一隻壞情緒魔物。<br>
+        安撫成功會獲得一句「愛的力量語句」，<br>
+        三格連成一線時，還會觸發「勇氣星星語句」獎勵。⭐<br>
+        <b>全部 9 格通關後 → 進入魔王關卡！</b>
+      </p>
+
+      <div class="map-grid">
+        <!-- 1 -->
+        <div class="map-cell" data-stage="1" data-monster="哭哭史萊姆">
+          <h4>新手草原</h4>
+          <p>住著愛哭又迷惘的<br>「哭哭史萊姆」。</p>
+          <span class="tag">Rock 天賦／不能出布</span>
+          <div class="pos-label">1</div>
+        </div>
+
+        <!-- 2 -->
+        <div class="map-cell" data-stage="2" data-monster="暴躁火球">
+          <h4>熾熱丘陵</h4>
+          <p>一不小心就會爆炸的<br>「暴躁火球」。</p>
+          <span class="tag">Rock 天賦／不能出布</span>
+          <div class="pos-label">2</div>
+        </div>
+
+        <!-- 3 -->
+        <div class="map-cell" data-stage="3" data-monster="壞心情南瓜">
+          <h4>南瓜農場</h4>
+          <p>嘴巴很兇、其實很寂寞的<br>「壞心情南瓜」。</p>
+          <span class="tag">Rock 天賦／不能出布</span>
+          <div class="pos-label">3</div>
+        </div>
+
+        <!-- 4 -->
+        <div class="map-cell" data-stage="4" data-monster="哭哭菇菇">
+          <h4>蘑菇森林</h4>
+          <p>常常覺得自己不夠好<br>的「哭哭菇菇」。</p>
+          <span class="tag">Paper 天賦／不能出剪刀</span>
+          <div class="pos-label">4</div>
+        </div>
+
+        <!-- 5 -->
+        <div class="map-cell" data-stage="5" data-monster="悲傷骷髏">
+          <h4>墓園小丘</h4>
+          <p>以為自己沒人愛的<br>「悲傷骷髏」。</p>
+          <span class="tag">Rock 天賦／不能出布</span>
+          <div class="pos-label">5</div>
+        </div>
+
+        <!-- 6 -->
+        <div class="map-cell" data-stage="6" data-monster="黏黏史萊姆">
+          <h4>黏黏沼澤</h4>
+          <p>總是黏住不想放手的<br>「黏黏史萊姆」。</p>
+          <span class="tag">Rock 天賦／不能出布</span>
+          <div class="pos-label">6</div>
+        </div>
+
+        <!-- 7 -->
+        <div class="map-cell" data-stage="7" data-monster="兇暴狼人">
+          <h4>魔狼森林</h4>
+          <p>看起來超兇，其實怕孤單的<br>「兇暴狼人」。</p>
+          <span class="tag">Rock 天賦／不能出布</span>
+          <div class="pos-label">7</div>
+        </div>
+
+        <!-- 8 -->
+        <div class="map-cell" data-stage="8" data-monster="小惡魔">
+          <h4>惡作劇山丘</h4>
+          <p>愛捉弄人的<br>「小惡魔」。</p>
+          <span class="tag">Rock 天賦／不能出剪刀</span>
+          <div class="pos-label">8</div>
+        </div>
+
+        <!-- 9 -->
+        <div class="map-cell" data-stage="9" data-monster="憂鬱幽靈">
+          <h4>黑霧邊界</h4>
+          <p>徘徊在黑霧邊緣的<br>「憂鬱幽靈」。</p>
+          <span class="tag">Paper 天賦／不能出石頭</span>
+          <div class="pos-label">9</div>
+        </div>
+      </div>
+
+      <div id="currentStage" class="current-stage">
+        目前尚未選擇關卡，請點擊一格地圖開始冒險。
+      </div>
+
+      <!-- 愛的力量語句顯示區 -->
+      <div id="loveMessage">
+        💗 愛的力量語句：當你安撫第一隻魔物成功時，這裡會出現一句溫暖的話。
+      </div>
+
+      <!-- 勇氣星星語句顯示區 -->
+      <div id="courageMessage">
+        ⭐ 勇氣星星語句：當三格連成一線時，這裡會出現一顆勇氣星星送給你。
+      </div>
+
+      <div class="center">
+        <button class="primary-btn" onclick="startGameFromMap()">
+          ⚔️ 進入戰鬥！
+        </button>
+      </div>
+
+      <div class="tip-box">
+        小任務：<br>
+        ✔ 把九宮格全部變成 ⭐ 已通關<br>
+        ✔ 就能面對壞情緒的源頭──魔王黑霧巨龍！
+      </div>
+    </div>
+
+    <!-- ⚔️ 戰鬥頁面（一般戰 + 魔王戰共用） -->
+    <div id="page-battle" class="page">
+      <h3>⚔️ 對戰畫面</h3>
+
+      <div class="battle-box">
+        <div class="battle-mode-label" id="battleModeLabel">
+          模式：一般關卡
+        </div>
+        <div class="battle-header">
+          <div class="battle-hero">
+            👦 小勇者：<br>
+            <b id="battleHeroName">（尚未選擇）</b><br>
+            <span id="battleHeroTalent">招牌拳：—</span>
+          </div>
+          <div class="battle-monster">
+            👾 對戰魔物：<br>
+            <b id="battleMonsterName">—</b><br>
+            <span id="battleMonsterInfo">天賦：—／弱點：—</span>
+          </div>
+        </div>
+
+        <div class="bear-tip" id="bearTip">
+          🧸 村長熊熊提示：選好地圖上的關卡後，這裡會告訴你魔物不能出什麼拳！
+        </div>
+
+        <div class="battle-buttons">
+          <button class="battle-btn" id="btn-rock" onclick="playerChoose('rock')">✊ 石頭</button>
+          <button class="battle-btn" id="btn-scissors" onclick="playerChoose('scissors')">✌️ 剪刀</button>
+          <button class="battle-btn" id="btn-paper" onclick="playerChoose('paper')">🖐 布</button>
+        </div>
+
+        <div id="battleResult">
+          這裡會顯示對戰結果與心情變化。
+        </div>
+
+        <div class="center">
+          <button class="primary-btn" onclick="backToMap()">
+            ⬅ 回地圖選下一關
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📖 故事背景 -->
+    <div id="page-story" class="page">
+      <h3>📖 故事背景</h3>
+      <p>
+        在遙遠的「星星王國」裡，所有魔物原本都快快樂樂地生活著。
+        直到某一天，一股神秘的「壞情緒黑霧」突然降臨，
+        魔物們被影響得哭哭啼啼、暴躁生氣、失去笑容！
+      </p>
+      <p>
+        星星王國的孩子們被選中成為「小勇者」，
+        只要用 <b>剪刀、石頭、布</b> 的勇氣之力，
+        就能解除魔物的壞情緒，讓牠們再次露出幸福的笑容。
+      </p>
+      <p>
+        村長熊熊會一路陪伴你，提醒魔物的弱點，
+        幫助你順利通關，直到挑戰黑霧巨龍。
+      </p>
+    </div>
+
+    <!-- 🎮 玩法教學 -->
+    <div id="page-howto" class="page">
+      <h3>🎮 基本玩法</h3>
+      <ul>
+        <li>與魔物進行「剪刀、石頭、布」對決。</li>
+        <li>每隻魔物都有「天賦拳」與「不能出的弱點拳」。</li>
+        <li>出對拳 → 傳遞好心情，魔物會從哭哭變開心。</li>
+        <li>當魔物變成開心版本，就會離開黑霧，回到星星王國。</li>
+        <li>全部九宮格通關後，就會解鎖魔王黑霧巨龍。</li>
+      </ul>
+    </div>
+
+    <!-- 🧟 魔物圖鑑（簡易版） -->
+    <div id="page-monsters" class="page">
+      <h3>🧟 魔物圖鑑（節錄）</h3>
+      <ul>
+        <li>哭哭史萊姆（Rock／不能出布）</li>
+        <li>暴躁火球（Rock／不能出布）</li>
+        <li>壞心情南瓜（Rock／不能出布）</li>
+        <li>哭哭菇菇（Paper／不能出剪刀）</li>
+        <li>悲傷骷髏（Rock／不能出布）</li>
+        <li>黏黏史萊姆（Rock／不能出布）</li>
+        <li>兇暴狼人（Rock／不能出布）</li>
+        <li>小惡魔（Rock／不能出剪刀）</li>
+        <li>憂鬱幽靈（Paper／不能出石頭）</li>
+        <li>魔王．黑霧巨龍（Scissors／不能出石頭）</li>
+      </ul>
+    </div>
+
+    <!-- ⚙️ 設定 / 說明 -->
+    <div id="page-settings" class="page">
+      <h3>⚙️ 設定 / 家長導覽</h3>
+      <p>
+        這是一款結合「情緒教育」與「剪刀石頭布」的輕量遊戲，
+        適合親子一起玩，建議年齡約 5 歲以上。
+      </p>
+      <ul>
+        <li>可搭配真實卡牌／桌遊一起使用。</li>
+        <li>建議遊戲後和孩子聊聊：<br>
+          「哪一隻魔物跟你很像？」<br>
+          「你最近有出現什麼壞情緒嗎？」</li>
+        <li>讓孩子知道：所有情緒都可以被看見與安撫。</li>
+      </ul>
+
+      <p class="mono">
+        ※ 本頁已整合：選角、九宮格地圖、單場戰鬥、<br>
+        愛的力量語句、勇氣星星語句、通關連線判定、<br>
+        以及「九宮格通關 → 魔王戰」流程。
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // =========================
+  // 語句資料：愛的力量 & 勇氣星星
+  // =========================
+  const loveSentences = [
+    "你不需要完美，也值得被好好愛著。",
+    "哭一哭也沒關係，我會在這裡陪你。",
+    "當你說出心裡話的時候，你就很勇敢。",
+    "生氣的你、難過的你，我都一樣喜歡。",
+    "你願意再試一次，已經超棒了。",
+    "你不是一個人，我們一起想辦法。",
+    "每一種情緒都在提醒你：你很重要。",
+    "今天的你，已經很努力照顧自己了。",
+    "需要休息的時候，停下來也可以喔。",
+    "你可以慢慢來，世界不會把你丟下。",
+    "就算事情沒照計畫走，你的價值不會變。",
+    "你願意求助，就是很大的勇氣。",
+    "當你溫柔對待自己時，世界也會變溫柔。",
+    "你心裡的小小聲音，我都有在聽。",
+    "有時候迷路，才會發現新的風景。",
+    "你的眼淚不是麻煩，而是需要被看見的訊號。",
+    "你現在的樣子，就足夠可愛了。",
+    "不開心的時候也可以被喜歡，真的可以。",
+    "你願意在這裡，就是一件值得被擁抱的事。",
+    "你已經做得很好，不用跟別人比。",
+    "不用裝作沒事，有事我們一起面對。",
+    "你可以說「我需要抱抱」，這很勇敢。",
+    "當你照顧自己時，也是對世界的一種溫柔。",
+    "小小的你，也有大大的影響力。",
+    "你每一次努力，愛都會默默記得。",
+    "就算被誤解，也不代表你是不好的孩子。",
+    "你可以慢慢長大，不用急著變厲害。",
+    "你值得被好好傾聽，不只是被教訓。",
+    "當你願意原諒自己時，心會變得比較輕。",
+    "你是獨一無二的禮物，世界因你而不同。"
+  ];
+
+  const courageSentences = [
+    "勇氣不是不害怕，而是害怕還是願意試試看。",
+    "你今天跨出的小小一步，都是大大的進步。",
+    "失敗一次不代表結束，只代表在練習。",
+    "每當你說「我想再試一次」，勇氣星星就亮起來。",
+    "願意承認「我不懂」，本身就是一種超級勇敢。",
+    "當你保護自己和別人的界線，你就是小小守護者。",
+    "說出「我不喜歡這樣」，也是勇氣的超能力。",
+    "每當你選擇溫柔而不是傷害，你就在發光。",
+    "害怕時願意求救，是勇者才會做的事。",
+    "你願意為重要的人多走一步，就是愛的勇氣。",
+    "面對自己的情緒，比面對怪物還要厲害。",
+    "每一次鼓起勇氣說「可以幫幫我嗎」，星星就會為你拍手。",
+    "當你替別人說句公道話，你就是正義的小勇者。",
+    "不放棄的你，遠比自己想像中更強大。",
+    "道歉並不丟臉，而是心變得更柔軟的證明。",
+    "當你願意原諒自己，就有能力擁抱別人。",
+    "勇氣星星說：「慢慢來也沒關係，只要你還在路上。」",
+    "今天努力活著的你，本身就是超級任務完成。",
+    "你學會向前，也學會後退一步看更清楚。",
+    "不管結果如何，你願意參與，就已經很值得被稱讚。"
+  ];
+
+  function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  // =========================
+  // Monster 設定（天賦拳／不能出拳）
+  // =========================
+  const monstersConfig = {
+    "哭哭史萊姆": { talent: "rock", forbidden: "paper" },
+    "暴躁火球": { talent: "rock", forbidden: "paper" },
+    "壞心情南瓜": { talent: "rock", forbidden: "paper" },
+    "哭哭菇菇": { talent: "paper", forbidden: "scissors" },
+    "悲傷骷髏": { talent: "rock", forbidden: "paper" },
+    "黏黏史萊姆": { talent: "rock", forbidden: "paper" },
+    "兇暴狼人": { talent: "rock", forbidden: "paper" },
+    "小惡魔": { talent: "rock", forbidden: "scissors" },
+    "憂鬱幽靈": { talent: "paper", forbidden: "rock" },
+    // 魔王關卡
+    "魔王．黑霧巨龍": { talent: "scissors", forbidden: "rock", boss: true }
+  };
+
+  function fistToText(fist) {
+    if (fist === "rock") return "石頭 ✊";
+    if (fist === "paper") return "布 🖐";
+    if (fist === "scissors") return "剪刀 ✌️";
+    return "—";
+  }
+
+  function forbiddenText(fist) {
+    if (fist === "rock") return "不能出「石頭 ✊」";
+    if (fist === "paper") return "不能出「布 🖐」";
+    if (fist === "scissors") return "不能出「剪刀 ✌️」";
+    return "有點神祕，看不出弱點…";
+  }
+
+  // =========================
+  // Tabs 分頁切換
+  // =========================
+  const navButtons = document.querySelectorAll('.nav-btn');
+  const pages = document.querySelectorAll('.page');
+
+  function showPage(id) {
+    pages.forEach(p => {
+      p.classList.toggle('active', p.id === id);
+    });
+  }
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      showPage(target);
+    });
+  });
+
+  // =========================
+  // 小勇者選擇
+  // =========================
+  let currentHero = null;
+  let currentHeroTalent = null;
+  const heroCards = document.querySelectorAll('.hero-card');
+  const currentHeroBox = document.getElementById('currentHero');
+
+  heroCards.forEach(card => {
+    card.addEventListener('click', () => {
+      heroCards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+
+      const name = card.dataset.hero;
+      const fist = card.dataset.fist;
+      const line = card.dataset.line;
+
+      currentHero = name;
+      currentHeroTalent = fist;
+
+      let talentText = "任意拳";
+      if (fist === "rock") talentText = "石頭 ✊";
+      if (fist === "paper") talentText = "布 🖐";
+      if (fist === "scissors") talentText = "剪刀 ✌️";
+
+      currentHeroBox.innerHTML = `
+        目前選擇的小勇者：<b>${name}</b><br>
+        招牌拳法：${talentText}<br>
+        口頭禪：${line}
+      `;
+    });
+  });
+
+  function goToHome() {
+    const btn = document.querySelector('.nav-btn[data-target="page-home"]');
+    if (btn) {
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    showPage('page-home');
+  }
+
+  function goToMap() {
+    const btn = document.querySelector('.nav-btn[data-target="page-map"]');
+    if (btn) {
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    showPage('page-map');
+  }
+
+  // =========================
+  // 九宮格地圖選擇 & 通關紀錄
+  // =========================
+  let currentStage = null;
+  let currentMonster = null;
+  const mapCells = document.querySelectorAll('.map-cell');
+  const currentStageBox = document.getElementById('currentStage');
+
+  const clearedStages = Array(9).fill(false);
+  const lines = [
+    [0,1,2], [3,4,5], [6,7,8], // 橫排
+    [0,3,6], [1,4,7], [2,5,8], // 直排
+    [0,4,8], [2,4,6]           // 斜線
+  ];
+  const lineCompleted = Array(lines.length).fill(false);
+
+  let bossUnlocked = false;
+  let bossDefeated = false;
+  const BOSS_NAME = "魔王．黑霧巨龍";
+
+  mapCells.forEach(cell => {
+    cell.addEventListener('click', () => {
+      mapCells.forEach(c => c.classList.remove('active'));
+      cell.classList.add('active');
+
+      currentStage = parseInt(cell.dataset.stage, 10);
+      currentMonster = cell.dataset.monster;
+
+      currentStageBox.innerHTML = `
+        目前選擇的地點：<b>第 ${currentStage} 格</b><br>
+        對戰魔物：<b>${currentMonster}</b><br>
+        點擊「進入戰鬥！」即可開始這一關。
+      `;
+    });
+  });
+
+  function onMonsterCalmed(stageNumber) {
+    const idx = stageNumber - 1;
+    if (!clearedStages[idx]) {
+      clearedStages[idx] = true;
+      const cell = document.querySelector(`.map-cell[data-stage="${stageNumber}"]`);
+      if (cell && !cell.querySelector('.cleared-star')) {
+        const star = document.createElement('div');
+        star.className = 'cleared-star';
+        star.textContent = '⭐ 已通關';
+        cell.appendChild(star);
+      }
+    }
+
+    const loveBox = document.getElementById('loveMessage');
+    loveBox.textContent = '💗 愛的力量語句：' + pickRandom(loveSentences);
+
+    const newly = checkNewLines();
+    if (newly > 0) {
+      const courageBox = document.getElementById('courageMessage');
+      courageBox.textContent = '⭐ 勇氣星星語句：' + pickRandom(courageSentences);
+    }
+
+    // ✅ 檢查是否九宮格全部通關 → 解鎖魔王關卡
+    if (!bossUnlocked && clearedStages.every(v => v)) {
+      bossUnlocked = true;
+      alert("🌟 恭喜！九宮格全部通關！\n黑霧的源頭正在甦醒，準備挑戰魔王黑霧巨龍！");
+      startBossBattle();
+    }
+  }
+
+  function checkNewLines() {
+    let newly = 0;
+    lines.forEach((line, index) => {
+      if (!lineCompleted[index]) {
+        const ok = line.every(i => clearedStages[i]);
+        if (ok) {
+          lineCompleted[index] = true;
+          newly++;
+        }
+      }
+    });
+    return newly;
+  }
+
+  // =========================
+  // 戰鬥畫面邏輯（一般關卡 & 魔王關卡）
+  // =========================
+  const battleHeroName = document.getElementById('battleHeroName');
+  const battleHeroTalent = document.getElementById('battleHeroTalent');
+  const battleMonsterName = document.getElementById('battleMonsterName');
+  const battleMonsterInfo = document.getElementById('battleMonsterInfo');
+  const battleModeLabel = document.getElementById('battleModeLabel');
+  const bearTip = document.getElementById('bearTip');
+  const battleResultBox = document.getElementById('battleResult');
+
+  const btnRock = document.getElementById('btn-rock');
+  const btnScissors = document.getElementById('btn-scissors');
+  const btnPaper = document.getElementById('btn-paper');
+
+  let isBossBattle = false;
+
+  function highlightHeroTalentButton() {
+    [btnRock, btnScissors, btnPaper].forEach(btn => btn.classList.remove('hero-talent'));
+    if (currentHeroTalent === 'rock') btnRock.classList.add('hero-talent');
+    if (currentHeroTalent === 'scissors') btnScissors.classList.add('hero-talent');
+    if (currentHeroTalent === 'paper') btnPaper.classList.add('hero-talent');
+    // any：不特別標
+  }
+
+  function setupBattle() {
+    if (!currentHero) {
+      battleResultBox.textContent = '請先在「選擇小勇者」頁面選一個角色。';
+      return;
+    }
+
+    let monsterName = currentMonster;
+    if (isBossBattle) {
+      monsterName = BOSS_NAME;
+    }
+
+    const config = monstersConfig[monsterName] || { talent: 'rock', forbidden: null };
+
+    battleHeroName.textContent = currentHero;
+    if (currentHeroTalent === 'any') {
+      battleHeroTalent.textContent = '招牌拳：任意拳（魔王戰才發動特殊效果）';
+    } else {
+      battleHeroTalent.textContent = '招牌拳：' + fistToText(currentHeroTalent);
+    }
+
+    battleMonsterName.textContent = monsterName;
+    battleMonsterInfo.textContent =
+      '天賦：' + fistToText(config.talent) +
+      ' ／ 弱點：' + (config.forbidden ? forbiddenText(config.forbidden) : '未知');
+
+    if (isBossBattle) {
+      battleModeLabel.textContent = '模式：最終魔王戰';
+      bearTip.textContent =
+        '🧸 村長熊熊提示：黑霧巨龍的心裡藏著很多委屈與生氣，' +
+        '記得用你的招牌拳與愛的力量慢慢安撫牠。';
+      battleResultBox.textContent =
+        '這是最終關卡！請選擇要出的拳，試著讓黑霧巨龍也露出笑容。';
+    } else {
+      battleModeLabel.textContent = '模式：一般關卡';
+      bearTip.textContent =
+        '🧸 村長熊熊提示：這隻魔物 ' +
+        (config.forbidden ? forbiddenText(config.forbidden) : '有點神祕，觀察牠的出拳吧！');
+      battleResultBox.textContent =
+        '請選擇要出的拳，看看能不能安撫牠的心情。';
+    }
+
+    highlightHeroTalentButton();
+  }
+
+  function randomMonsterMove(config) {
+    const all = ['rock', 'paper', 'scissors'];
+    const allowed = config.forbidden ? all.filter(f => f !== config.forbidden) : all;
+    const pool = [...allowed, config.talent];
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function decideResult(player, monster) {
+    if (player === monster) return 'draw';
+    if (
+      (player === 'rock' && monster === 'scissors') ||
+      (player === 'scissors' && monster === 'paper') ||
+      (player === 'paper' && monster === 'rock')
+    ) return 'win';
+    return 'lose';
+  }
+
+  function playerChoose(playerMove) {
+    if (!currentHero) {
+      battleResultBox.textContent = '請先選擇小勇者再進行戰鬥。';
+      return;
+    }
+
+    let monsterName = currentMonster;
+    if (isBossBattle) {
+      monsterName = BOSS_NAME;
+    }
+    const config = monstersConfig[monsterName] || { talent: 'rock', forbidden: null };
+
+    const monsterMove = randomMonsterMove(config);
+    const result = decideResult(playerMove, monsterMove);
+
+    let txt = `你出了 ${fistToText(playerMove)}，魔物出了 ${fistToText(monsterMove)}。\n`;
+
+    if (result === 'win') {
+      let talentBonus = '';
+      if (!isBossBattle && currentHeroTalent !== 'any' && playerMove === currentHeroTalent) {
+        talentBonus = '\n✨ 觸發小勇者招牌拳！這次的好心情效果加倍！';
+      }
+      if (isBossBattle && currentHero === '勇敢的村民') {
+        talentBonus += '\n🌾 勇敢的村民在魔王戰發動真本事：就算曾經害怕，也願意站出來面對！';
+      }
+
+      if (isBossBattle) {
+        bossDefeated = true;
+        battleResultBox.textContent =
+          txt +
+          '🌈 你成功安撫了黑霧巨龍的心，牠終於停止怒吼，\n' +
+          '黑霧慢慢散去，星星王國重新亮起溫暖的光芒！\n\n' +
+          '👑 恭喜你完成最終魔王關卡！\n' +
+          '（你也可以和孩子聊聊：「黑霧巨龍心裡，其實在難過什麼呢？」）' +
+          talentBonus;
+      } else {
+        battleResultBox.textContent =
+          txt +
+          '✅ 你成功安撫了魔物的心情，牠露出了微笑，從黑霧中走出來了！' +
+          talentBonus;
+        onMonsterCalmed(currentStage);
+      }
+
+    } else if (result === 'draw') {
+      battleResultBox.textContent =
+        txt + '🤝 平手！魔物還在猶豫中，再試一次看看吧。';
+    } else {
+      let extra = '\n加油，你已經很勇敢了，可以再觀察一下牠的弱點喔。';
+      if (isBossBattle && currentHero === '勇敢的村民') {
+        extra += '\n🌾 勇敢的村民祕技：即使被打敗幾次，也不會被壞情緒打倒。';
+      }
+      battleResultBox.textContent =
+        txt + '💦 這回合你有點吃虧，魔物的壞情緒還沒被安撫。' + extra;
+    }
+  }
+
+  function backToMap() {
+    if (bossDefeated) {
+      alert("🎉 你已經打完魔王，可以回九宮格看看所有任務，或重新挑戰喜歡的關卡。");
+    }
+    goToMap();
+  }
+
+  // 一般關卡：從地圖進入戰鬥
+  function startGameFromMap() {
+    if (!currentHero) {
+      alert("請先在「選擇小勇者」頁面選一個角色，再開始冒險！");
+      return;
+    }
+    if (!currentStage || !currentMonster) {
+      alert("請先在九宮格地圖中選擇一格要挑戰的關卡！");
+      return;
+    }
+    isBossBattle = false;
+    showPage('page-battle');
+    const btn = document.querySelector('.nav-btn[data-target="page-battle"]');
+    if (btn) {
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    setupBattle();
+  }
+
+  // 魔王戰：九宮格全部通關後自動啟動
+  function startBossBattle() {
+    isBossBattle = true;
+    currentMonster = BOSS_NAME;
+    currentStage = null; // 不再對應九宮格
+    showPage('page-battle');
+    const btn = document.querySelector('.nav-btn[data-target="page-battle"]');
+    if (btn) {
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    setupBattle();
+  }
+</script>
+
+</body>
+</html>
