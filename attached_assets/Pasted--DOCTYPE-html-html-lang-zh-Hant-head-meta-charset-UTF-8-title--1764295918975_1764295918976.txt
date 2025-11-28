@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>小勇者剪刀石頭布 — 單場戰鬥＋關卡版 DEMO</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #ffe9c6, #fff6e9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .game {
+      width: 100%;
+      max-width: 900px;
+      background: #fffdf8;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      padding: 16px;
+    }
+
+    .top-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .panel {
+      flex: 1;
+      min-width: 260px;
+      border-radius: 12px;
+      padding: 12px;
+      background: #fffaf0;
+      border: 2px solid #f2dcc0;
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .monster-img,
+    .hero-img {
+      width: 100%;
+      max-height: 260px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #fdf4ea;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0 4px;
+      font-size: 14px;
+    }
+
+    #hearts,
+    #stars {
+      font-size: 18px;
+    }
+
+    #level {
+      font-size: 14px;
+      color: #8a5b2c;
+    }
+
+    #kuma-tip {
+      font-size: 14px;
+      line-height: 1.4;
+      background: #fff7e2;
+      border-radius: 10px;
+      padding: 8px 10px;
+      border: 1px dashed #f0c27b;
+      margin-top: 6px;
+    }
+
+    #kuma-tip::before {
+      content: "🐻 村長熊熊：";
+      font-weight: 600;
+    }
+
+    #hero-info {
+      font-size: 14px;
+      line-height: 1.4;
+      margin-top: 6px;
+      background: #f4f8ff;
+      border-radius: 10px;
+      padding: 6px 8px;
+      border: 1px solid #c7d8ff;
+    }
+
+    #hero-info strong {
+      color: #3056b8;
+    }
+
+    #controls {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    #controls button {
+      flex: 1;
+      min-width: 90px;
+      padding: 10px 8px;
+      border-radius: 999px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      background: #ffe1a8;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+      box-shadow: 0 3px 0 #d8b07e;
+    }
+
+    #controls button:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #d8b07e;
+      background: #ffcf79;
+    }
+
+    #message {
+      margin-top: 10px;
+      font-size: 14px;
+      min-height: 40px;
+      background: #fff7eb;
+      border-radius: 10px;
+      padding: 8px 10px;
+      border: 1px solid #f0d2a4;
+      line-height: 1.5;
+    }
+
+    #monster-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    #monster-tags {
+      font-size: 12px;
+      color: #6c4a26;
+      margin-bottom: 6px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #ffe8c6;
+      margin-right: 4px;
+    }
+
+    /* 小螢幕調整 */
+    @media (max-width: 600px) {
+      .game {
+        border-radius: 0;
+        box-shadow: none;
+        height: 100vh;
+        overflow-y: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <div class="status-row">
+      <div id="hearts">❤️❤️❤️</div>
+      <div id="level">第 1 / 10 關</div>
+      <div id="stars">⭐ 0</div>
+    </div>
+
+    <div class="top-row">
+      <!-- 魔物區 -->
+      <div class="panel">
+        <h2>魔物</h2>
+        <div id="monster-name"></div>
+        <div id="monster-tags"></div>
+        <img id="monster-img" class="monster-img" src="" alt="monster" />
+        <div id="kuma-tip"></div>
+      </div>
+
+      <!-- 勇者區 -->
+      <div class="panel">
+        <h2>小勇者（戰士）</h2>
+        <img id="hero-img" class="hero-img" src="hero_warrior.png" alt="hero warrior" />
+        <div id="hero-info">
+          角色：<strong>戰士 🛡️（天賦：✊ 石頭）</strong><br />
+          天賦效果：<strong>若出 ✊ 石頭並且獲勝 → 傳達 2 倍好心情（+2⭐）</strong><br />
+          其他拳獲勝則是 +1⭐。
+        </div>
+      </div>
+    </div>
+
+    <!-- 出拳按鈕 -->
+    <div id="controls">
+      <button onclick="playRound('rock')">✊ 石頭</button>
+      <button onclick="playRound('scissors')">✌ 剪刀</button>
+      <button onclick="playRound('paper')">🖐 布</button>
+    </div>
+
+    <!-- 訊息區 -->
+    <div id="message">點選上面的拳，幫助小勇者安撫魔物吧！</div>
+  </div>
+
+  <!-- 音效與語音（檔名請照前面表格準備） -->
+  <audio id="sfx-throw" src="sfx_throw.mp3" preload="auto"></audio>
+  <audio id="sfx-win" src="sfx_win.mp3" preload="auto"></audio>
+  <audio id="voice-kuma" src="voice_kuma_tip.mp3" preload="auto"></audio>
+
+  <script>
+    // 拳種對照
+    const moves = {
+      rock:    { label: "✊ 石頭"   },
+      paper:   { label: "🖐 布"     },
+      scissors:{ label: "✌ 剪刀"   }
+    };
+
+    // 10 隻魔物資料：天賦、弱點、圖片檔名
+    const monsters = [
+      {
+        key: "slime",
+        zhName: "史萊姆",
+        talent: "rock",
+        weakness: "paper",
+        sadImg: "slime_sad.png",
+        happyImg: "slime_happy.png",
+        cured: false
+      },
+      {
+        key: "crying_bat",
+        zhName: "哭哭蝙蝠",
+        talent: "paper",
+        weakness: "scissors",
+        sadImg: "crying_bat_sad.png",
+        happyImg: "crying_bat_happy.png",
+        cured: false
+      },
+      {
+        key: "little_imp",
+        zhName: "小惡魔",
+        talent: "rock",
+        weakness: "scissors",
+        sadImg: "little_imp_sad.png",
+        happyImg: "little_imp_happy.png",
+        cured: false
+      },
+      {
+        key: "lazy_treant",
+        zhName: "懶懶樹精",
+        talent: "paper",
+        weakness: "rock",
+        sadImg: "lazy_treant_sad.png",
+        happyImg: "lazy_treant_happy.png",
+        cured: false
+      },
+      {
+        key: "grumpy_fireball",
+        zhName: "火球怪",
+        talent: "rock",
+        weakness: "paper",
+        sadImg: "grumpy_fireball_sad.png",
+        happyImg: "grumpy_fireball_happy.png",
+        cured: false
+      },
+      {
+        key: "weeping_ghost",
+        zhName: "哭哭鬼",
+        talent: "scissors",
+        weakness: "rock",
+        sadImg: "weeping_ghost_sad.png",
+        happyImg: "weeping_ghost_happy.png",
+        cured: false
+      },
+      {
+        key: "crying_mushroom",
+        zhName: "哭哭香菇",
+        talent: "paper",
+        weakness: "scissors",
+        sadImg: "crying_mushroom_sad.png",
+        happyImg: "crying_mushroom_happy.png",
+        cured: false
+      },
+      {
+        key: "sad_skeleton",
+        zhName: "哭哭骷髏",
+        talent: "rock",
+        weakness: "paper",
+        sadImg: "sad_skeleton_sad.png",
+        happyImg: "sad_skeleton_happy.png",
+        cured: false
+      },
+      {
+        key: "happy_pumpkin",
+        zhName: "南瓜魔王",
+        talent: "rock",
+        weakness: "paper",
+        sadImg: "happy_pumpkin_sad.png",
+        happyImg: "happy_pumpkin_happy.png",
+        cured: false
+      },
+      {
+        key: "ferocious_werewolf",
+        zhName: "狼人",
+        talent: "rock",
+        weakness: "paper",
+        sadImg: "ferocious_werewolf_sad.png",
+        happyImg: "ferocious_werewolf_happy.png",
+        cured: false
+      }
+    ];
+
+    let currentIndex = 0;
+    let hearts = 3;
+    let stars = 0;
+
+    function currentMonster() {
+      return monsters[currentIndex];
+    }
+
+    function moveBeating(move) {
+      if (move === "rock") return "paper";
+      if (move === "paper") return "scissors";
+      return "rock"; // scissors
+    }
+
+    function makeKumaTip(monster) {
+      const talentLabel   = moves[monster.talent].label;
+      const weaknessLabel = moves[monster.weakness].label;
+      const bestMove      = moveBeating(monster.talent);
+      const bestLabel     = moves[bestMove].label;
+
+      return `${monster.zhName} 的天賦是 ${talentLabel}，最拿手那一拳很強喔！但是牠「不能出」 ${weaknessLabel}。你可以多試試 ${bestLabel}，更容易讓牠恢復好心情～`;
+    }
+
+    function renderStatus() {
+      const heartsEl = document.getElementById("hearts");
+      heartsEl.textContent = "❤️".repeat(hearts);
+
+      const starsEl = document.getElementById("stars");
+      starsEl.textContent = "⭐ " + stars;
+
+      const levelEl = document.getElementById("level");
+      levelEl.textContent = `第 ${currentIndex + 1} / ${monsters.length} 關`;
+    }
+
+    function renderMonster() {
+      const monster = currentMonster();
+
+      const nameEl = document.getElementById("monster-name");
+      nameEl.textContent = monster.zhName;
+
+      const tagsEl = document.getElementById("monster-tags");
+      const talentLabel   = moves[monster.talent].label;
+      const weaknessLabel = moves[monster.weakness].label;
+      tagsEl.innerHTML =
+        `<span class="tag">天賦：${talentLabel}</span>` +
+        `<span class="tag">弱點（不能出）：${weaknessLabel}</span>`;
+
+      const imgEl = document.getElementById("monster-img");
+      imgEl.src = monster.cured ? monster.happyImg : monster.sadImg;
+
+      const tipEl = document.getElementById("kuma-tip");
+      tipEl.textContent = makeKumaTip(monster);
+
+      // 村長熊熊語音提示（可能會被瀏覽器靜音，沒關係）
+      const voice = document.getElementById("voice-kuma");
+      if (voice) {
+        voice.currentTime = 0;
+        voice.play().catch(() => {});
+      }
+    }
+
+    function getMonsterMove(monster) {
+      const allMoves = ["rock", "paper", "scissors"];
+      const options = allMoves.filter(m => m !== monster.weakness); // 不能出弱點拳
+      const idx = Math.floor(Math.random() * options.length);
+      return options[idx];
+    }
+
+    function getResult(player, enemy) {
+      if (player === enemy) return "tie";
+      if (
+        (player === "rock"     && enemy === "scissors") ||
+        (player === "scissors" && enemy === "paper")    ||
+        (player === "paper"    && enemy === "rock")
+      ) {
+        return "win";
+      }
+      return "lose";
+    }
+
+    function playRound(playerMove) {
+      const throwSfx = document.getElementById("sfx-throw");
+      if (throwSfx) {
+        throwSfx.currentTime = 0;
+        throwSfx.play().catch(() => {});
+      }
+
+      const monster = currentMonster();
+      const enemyMove = getMonsterMove(monster);
+      const result = getResult(playerMove, enemyMove);
+
+      let msg = `你出 ${moves[playerMove].label}，魔物出 ${moves[enemyMove].label}。`;
+
+      if (result === "tie") {
+        msg += " 平手！再試一次～";
+        document.getElementById("message").textContent = msg;
+        return;
+      }
+
+      if (result === "win") {
+        const winSfx = document.getElementById("sfx-win");
+        if (winSfx) {
+          winSfx.currentTime = 0;
+          winSfx.play().catch(() => {});
+        }
+
+        let gain = 1;
+        if (playerMove === "rock") {
+          // 戰士天賦：出石頭獲勝 → +2⭐
+          gain = 2;
+          msg += " 戰士天賦觸發！出 ✊ 石頭獲勝，傳達 2 倍好心情！(+2⭐)";
+        } else {
+          msg += " 你成功安撫了魔物！(+1⭐)";
+        }
+
+        stars += gain;
+        monsters[currentIndex].cured = true;
+
+        // 顯示開心版圖片
+        document.getElementById("monster-img").src = monster.happyImg;
+        renderStatus();
+        document.getElementById("message").textContent = msg;
+
+        // 1.2 秒後自動進入下一關
+        setTimeout(nextMonster, 1200);
+        return;
+      }
+
+      // 玩家輸了
+      hearts -= 1;
+      msg += " 這回合被壞情緒影響了，失去一顆心…";
+      if (hearts <= 0) {
+        msg += " 心力用盡啦！先深呼吸一下，再重新挑戰全部魔物吧～";
+        document.getElementById("message").textContent = msg;
+
+        // 重置遊戲
+        setTimeout(() => {
+          hearts = 3;
+          stars = 0;
+          currentIndex = 0;
+          monsters.forEach(m => m.cured = false);
+          renderStatus();
+          renderMonster();
+          document.getElementById("message").textContent =
+            "新的冒險開始！點選拳，幫助小勇者再次出發～";
+        }, 1500);
+      } else {
+        renderStatus();
+        document.getElementById("message").textContent = msg;
+      }
+    }
+
+    function nextMonster() {
+      if (currentIndex < monsters.length - 1) {
+        currentIndex += 1;
+        renderStatus();
+        renderMonster();
+        document.getElementById("message").textContent =
+          "下一隻魔物出現了！看看村長熊熊的提示，再出拳吧～";
+      } else {
+        document.getElementById("message").textContent =
+          "恭喜！所有魔物都恢復好心情，勇者任務大成功！🎉";
+      }
+    }
+
+    // 初始化
+    window.addEventListener("load", () => {
+      renderStatus();
+      renderMonster();
+    });
+  </script>
+</body>
+</html>
