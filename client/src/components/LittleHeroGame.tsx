@@ -19,6 +19,13 @@ const MOVES: { id: Move; label: string; icon: React.ElementType }[] = [
 const MAX_HP = 3;
 const MAX_MOOD = 3;
 
+// =============================
+// Monster Weakness Setting (Forbidden Move)
+// =============================
+// The monster will NEVER use this move.
+// Options: "rock" | "scissors" | "paper"
+const monsterWeakness: Move = "rock";
+
 export default function LittleHeroGame() {
   const [heroHp, setHeroHp] = useState(MAX_HP);
   const [monsterMood, setMonsterMood] = useState(MAX_MOOD);
@@ -39,7 +46,9 @@ export default function LittleHeroGame() {
 
   const getRandomMove = (): Move => {
     const moves: Move[] = ['rock', 'scissors', 'paper'];
-    return moves[Math.floor(Math.random() * moves.length)];
+    // Monster cannot use its "weakness" move (forbidden move)
+    const availableMoves = moves.filter(move => move !== monsterWeakness);
+    return availableMoves[Math.floor(Math.random() * availableMoves.length)];
   };
 
   const judge = (player: Move, enemy: Move) => {
@@ -188,6 +197,9 @@ export default function LittleHeroGame() {
                     <Badge variant="outline" className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white whitespace-nowrap">
                       Grumpy Monster
                     </Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground mb-1 italic">
+                    Seems afraid of {monsterWeakness}...
                   </div>
                   <div className="flex justify-center gap-1 mb-2">
                     {Array.from({ length: MAX_MOOD }).map((_, i) => (
