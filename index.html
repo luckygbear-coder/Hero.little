@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Little Hero Adventure</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Little Hero Adventure</title>
+</head>
+<body style="margin:0; background:#ffeec9;">
+  <div id="app"></div>
 
-    <!-- favicon（如未使用可刪除） -->
-    <link rel="icon" type="image/png" href="./attached_assets/favicon.png" />
-
-    <!-- Vite 編譯後的 JS -->
-    <script type="module" src="/client/main.ts"></script>
-  </head>
-
-  <body style="margin:0; background:#ffeec9;">
-    <div id="app"></div>
-  </body>
+  <!-- ★ Vite 入口：對應 client/src/main.tsx ★ -->
+  <script type="module" src="/client/src/main.tsx"></script>
+</body>
 </html>
