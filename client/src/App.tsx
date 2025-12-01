@@ -1,27 +1,20 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import Home from "@/pages/Home";
-import NotFound from "@/pages/not-found";
-
-function Router() {
-  return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
+// client/src/App.tsx
+import React from "react";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <div
+      style={{
+        minHeight: "100vh",
+        margin: 0,
+        padding: "16px",
+        backgroundColor: "#ffeec9",
+        fontFamily: "'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif",
+      }}
+    >
+      <h1 style={{ fontSize: "24px", marginBottom: "12px" }}>小勇者之旅大冒險</h1>
+      <p>這裡是 GitHub Pages 上的 React 版本。之後我們可以慢慢把完整遊戲畫面搬進來。</p>
+    </div>
   );
 }
 
