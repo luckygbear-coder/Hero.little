@@ -27,21 +27,40 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      # 在 client 資料夾裡安裝前端相依
-      - name: Install client dependencies
+      # 在專案根目錄安裝相依（跟 Replit 一樣）
+      - name: Install dependencies
         run: npm ci
-        working-directory: ./client
 
-      # 在 client 資料夾裡執行 Vite build
-      - name: Build client
+      # 在專案根目錄執行原本的 build 指令
+      - name: Build app
         run: npm run build
-        working-directory: ./client
 
-      # 上傳根目錄下的 dist（Replit build summary: /dist）
+      # 自動尋找 dist 資料夾，整理到 site/ 內
+      - name: Prepare static site folder
+        run: |
+          rm -rf site
+          mkdir -p site
+
+          echo "Search dist folders..."
+          BUILD_DIR=$(find . -maxdepth 4 -type d -name dist -print | head -n 1)
+
+          if [ -z "$BUILD_DIR" ]; then
+            echo "❌ No dist folder found (searched for any 'dist' directory)."
+            ls -R
+            exit 1
+          fi
+
+          echo "✅ Using build directory: $BUILD_DIR"
+          cp -r "$BUILD_DIR"/* site/
+
+          echo "Site folder content:"
+          ls -R site
+
+      # 把 site/ 上傳給 GitHub Pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site
 
   deploy:
     needs: build
