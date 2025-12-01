@@ -1,54 +1,19 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* client/src/index.css */
+/* 先用簡單版樣式，不用 Tailwind */
 
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-  --font-sans: 'Nunito', sans-serif;
-  --font-display: 'Fredoka', sans-serif;
-  --font-hand: 'Patrick Hand', cursive;
-
-  --color-background: hsl(36 60% 97%); /* #fff9f0 Cream */
-  --color-foreground: hsl(25 25% 30%); /* #604a3e Warm Brown */
-
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(25 25% 30%);
-
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(25 25% 30%);
-
-  --color-primary: hsl(35 90% 65%); /* #ffbc59 Warm Orange */
-  --color-primary-foreground: hsl(25 25% 20%);
-
-  --color-secondary: hsl(95 40% 70%); /* #a6cc99 Sage Green */
-  --color-secondary-foreground: hsl(100 30% 20%);
-
-  --color-muted: hsl(36 30% 90%);
-  --color-muted-foreground: hsl(25 15% 50%);
-
-  --color-accent: hsl(35 90% 85%);
-  --color-accent-foreground: hsl(25 25% 30%);
-
-  --color-destructive: hsl(0 70% 70%);
-  --color-destructive-foreground: hsl(0 0% 100%);
-
-  --color-border: hsl(35 40% 85%);
-  --color-input: hsl(35 40% 90%);
-  --color-ring: hsl(35 90% 65%);
-
-  --radius: 1rem;
+* {
+  box-sizing: border-box;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply font-sans antialiased bg-background text-foreground;
-    background-image: radial-gradient(hsl(35 50% 90%) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-semibold;
-  }
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: #ffeec9;
+  font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, sans-serif;
 }
