@@ -1,9 +1,8 @@
-name: Deploy Vite site to GitHub Pages
+name: Deploy client to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
-  workflow_dispatch:
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -12,33 +11,35 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./client
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+          cache: npm
+          cache-dependency-path: ./client/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Build Vite site
+      - name: Build site
         run: npm run build
 
-      - name: Upload GitHub Pages artifact
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Vite 會把檔案 build 到這裡（因為 vite.config.ts 的 root 設成 "client"）
-          path: client/dist
+          path: ./client/dist
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,8 +47,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4XDDDD 
