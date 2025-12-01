@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <title>Little Hero Adventure</title>
-  </head>
-  <body style="margin:0; background:#ffeec9;">
-    <!-- 這個 id 要和 src/main.tsx 裡面的一樣（通常是 root） -->
-    <div id="root"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Little Hero Adventure</title>
+</head>
+<body style="margin:0; background:#ffeec9;">
+  <div id="app"></div>
 
-    <!-- 讓 Vite 從這裡進入程式，會自動去載入 React 程式碼 -->
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- ★★★ 最正確（Vite 專用）入口 ★★★ -->
+  <script type="module" src="/Hero.little/src/main.js"></script>
+</body>
 </html>
