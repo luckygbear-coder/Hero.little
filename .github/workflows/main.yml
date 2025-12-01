@@ -27,21 +27,21 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      # Install dependencies inside client folder
+      # 在 client 資料夾裡安裝前端相依
       - name: Install client dependencies
         run: npm ci
         working-directory: ./client
 
-      # Build the Vite project in client folder
+      # 在 client 資料夾裡執行 Vite build
       - name: Build client
         run: npm run build
         working-directory: ./client
 
-      # Upload the built dist folder
+      # 上傳根目錄下的 dist（Replit build summary: /dist）
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: client/dist
+          path: dist
 
   deploy:
     needs: build
