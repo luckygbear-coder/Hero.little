@@ -27,16 +27,21 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Install dependencies
+      # Install dependencies inside client folder
+      - name: Install client dependencies
         run: npm ci
+        working-directory: ./client
 
-      - name: Build
+      # Build the Vite project in client folder
+      - name: Build client
         run: npm run build
+        working-directory: ./client
 
+      # Upload the built dist folder
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: client/dist
 
   deploy:
     needs: build
