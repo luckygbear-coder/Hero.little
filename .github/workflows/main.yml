@@ -1,4 +1,4 @@
-name: Deploy static client to GitHub Pages
+name: Deploy Vite site to GitHub Pages
 
 on:
   push:
@@ -18,15 +18,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 這裡不做 npm install、不做 npm run build
-      # 直接把 client 資料夾當作網站根目錄上傳
-      - name: Upload static site from client folder
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: client
+          path: dist
 
   deploy:
     needs: build
