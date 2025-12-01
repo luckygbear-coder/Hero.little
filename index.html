@@ -1,14 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Little Hero Adventure</title>
-</head>
-<body style="margin:0; background:#ffeec9;">
-  <div id="app"></div>
-
-  <!-- ★ Vite 入口：對應 client/src/main.tsx ★ -->
-  <script type="module" src="/client/src/main.tsx"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Little Hero Adventure</title>
+  </head>
+  <body style="margin:0; background:#ffeec9;">
+    <div id="root"></div>
+    <!-- 交給 Vite/React 入口檔 -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
